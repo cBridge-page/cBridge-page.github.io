@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>cBridge — Cross-Chain Bridge Guide: Fees, Supported Chains, Safety &amp; How It Works (2026)</title>
+  <meta name="description" content="Complete cBridge guide (2026): how Celer's cBridge cross-chain bridge works, supported chains and tokens, bridging fees, transfer speed, liquidity providers, CELR token, security model, comparison with other bridges, step-by-step tutorial, and a deep FAQ.">
+  <meta name="author" content="Crypto Finance Experts">
+  <link rel="canonical" href="https://cbridge-guide.example.com/">
+  <link rel="icon" type="image/png" href="cb.png">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cbridge-guide.example.com/">
+  <meta property="og:title" content="cBridge — Cross-Chain Bridge Guide: Fees, Chains &amp; Safety (2026)">
+  <meta property="og:description" content="Practical cBridge guide: how Celer's cross-chain bridge works, supported networks, fees, liquidity providers, CELR token, security, and step-by-step bridging tutorial.">
+  <meta property="og:image" content="cover.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="cBridge — Cross-Chain Bridge Guide (2026)">
+  <meta name="twitter:description" content="How cBridge works, supported chains, fees, CELR token, liquidity providers, security model, and bridging tutorial for 2026.">
+
+  <style>
+    :root {
+      --c:    #00C2FF;
+      --c2:   #00A3D9;
+      --c3:   #0082B3;
+      --ca:   #67DFFF;
+      --cs:   #E0F9FF;
+
+      --ink:   #F0FAFF;
+      --sub:   #BAF0FF;
+      --muted: #94A3B8;
+      --dim:   #64748B;
+
+      --bg:    #03090F;
+      --card:  rgba(255,255,255,.028);
+      --line:  rgba(255,255,255,.07);
+      --lc:    rgba(0,194,255,.13);
+
+      --ok:   #34D399;
+      --warn: #FBBF24;
+      --err:  #F87171;
+
+      --r:  12px;
+      --rl: 18px;
+      --gap: 1.2rem;
+      --sh: 0 8px 28px rgba(0,0,0,.58);
+      --shc: 0 4px 22px rgba(0,194,255,.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    html { scroll-behavior: smooth }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 900px 520px at 0%   0%,  rgba(0,163,217,.10), transparent 55%),
+        radial-gradient(ellipse 700px 400px at 100% 8%,  rgba(0,194,255,.06), transparent 50%),
+        radial-gradient(ellipse 600px 360px at 50%  98%, rgba(0,130,179,.07), transparent 55%);
+      color: var(--muted);
+      line-height: 1.72;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: var(--ca); text-decoration: none }
+    a:hover { text-decoration: underline }
+    img { max-width: 100%; height: auto; display: block }
+    strong { color: #E0F9FF; font-weight: 600 }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 1.4rem }
+
+    h1,h2,h3,h4 { color: var(--ink); line-height: 1.25 }
+    h1 { font-size: clamp(2rem,5vw,3.1rem); font-weight: 800; letter-spacing: -.4px }
+    h2 { font-size: clamp(1.25rem,2.5vw,1.75rem); font-weight: 700; margin-top: 1.8rem; padding-top: .7rem; border-top: 1px solid var(--line) }
+    h3 { font-size: 1.08rem; font-weight: 700; color: var(--sub) }
+    p,li,td,th { font-size: 1rem; line-height: 1.75 }
+    .lead { font-size: 1.08rem; color: #BFECFF }
+
+    /* HERO */
+    header.hero {
+      padding: clamp(2.5rem,6vw,5rem) 0 clamp(2rem,4vw,3.5rem);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-card {
+      background: rgba(0,163,217,.05);
+      border: 1px solid var(--lc);
+      border-radius: var(--rl);
+      padding: clamp(1.4rem,3.5vw,2.4rem);
+      box-shadow: var(--sh), var(--shc);
+      position: relative; overflow: hidden;
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,194,255,.50), transparent);
+    }
+
+    .brand-row { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem }
+    .brand-logo {
+      width: 54px; height: 54px; border-radius: 13px;
+      border: 1px solid rgba(0,194,255,.26);
+      background: rgba(0,163,217,.09);
+      padding: .3rem; object-fit: contain;
+      box-shadow: 0 4px 14px rgba(0,163,217,.20);
+      flex: 0 0 auto;
+    }
+    .brand-label { color: var(--dim); font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .4px }
+    .brand-sub   { color: var(--muted); font-size: .85rem }
+
+    /* CTA */
+    .cta-center { display: flex; justify-content: center; margin-top: 2rem }
+    .cta {
+      display: inline-flex; align-items: center; gap: .7rem;
+      background: linear-gradient(135deg, #67DFFF 0%, #00C2FF 40%, #00A3D9 75%, #0082B3 100%);
+      color: #001B2E;
+      padding: 1.2rem 3rem;
+      border-radius: 16px;
+      font-weight: 900; font-size: 1.15rem; letter-spacing: .15px;
+      box-shadow:
+        0 0 0 1px rgba(0,194,255,.24),
+        0 0 28px rgba(0,194,255,.30),
+        0 8px 22px rgba(0,163,217,.26),
+        0 20px 48px rgba(0,130,179,.20);
+      border: none; cursor: pointer; text-decoration: none;
+      transition: transform .18s, box-shadow .18s, filter .18s;
+    }
+    .cta:hover {
+      transform: translateY(-3px) scale(1.025); filter: brightness(1.07);
+      color: #001B2E; text-decoration: none;
+      box-shadow:
+        0 0 0 1px rgba(0,194,255,.40),
+        0 0 40px rgba(0,194,255,.44),
+        0 10px 28px rgba(0,163,217,.36),
+        0 26px 58px rgba(0,130,179,.28);
+    }
+
+    /* NOTE */
+    .note {
+      border-left: 3px solid var(--c);
+      padding: .8rem 1rem;
+      background: rgba(0,163,217,.07);
+      border-radius: 0 9px 9px 0;
+      color: var(--sub); margin-top: 1rem;
+    }
+
+    /* STEPS */
+    section.step-guide {
+      padding: clamp(2rem,5vw,3.5rem) 0;
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    }
+    .steps { display: grid; gap: var(--gap); grid-template-columns: 1fr }
+    .step {
+      background: var(--card); border: 1px solid var(--line);
+      border-top: 2px solid rgba(0,194,255,.28); border-radius: var(--r);
+      padding: 1.25rem; box-shadow: var(--sh); transition: transform .18s, box-shadow .18s;
+    }
+    .step:hover { transform: translateY(-3px); box-shadow: var(--sh), var(--shc) }
+    .step .icon {
+      width: 44px; height: 44px; border-radius: 9px;
+      display: inline-grid; place-items: center;
+      background: rgba(0,163,217,.11); margin-bottom: .65rem;
+      font-weight: 800; font-size: .95rem; color: var(--c);
+      border: 1px solid rgba(0,194,255,.22);
+    }
+
+    /* CARD */
+    main { padding-top: .5rem }
+    main .card {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: var(--r); padding: 1.5rem; margin: 1.2rem 0; box-shadow: var(--sh);
+    }
+    main .card > h2:first-child { margin-top: 0; border-top: none; padding-top: 0 }
+
+    /* TOC */
+    .toc { border: 1px solid var(--lc); background: rgba(0,163,217,.05); border-radius: var(--r); padding: 1.1rem 1.3rem }
+    .toc strong { color: var(--ink) }
+    .toc ul { margin: .5rem 0 0; padding-left: 1.1rem }
+    .toc li { margin: .28rem 0; font-size: .96rem }
+    .toc a { font-weight: 600 }
+
+    /* GRID */
+    .grid-2 { display: grid; gap: var(--gap); grid-template-columns: 1fr }
+    .callout-grid { display: grid; gap: var(--gap); grid-template-columns: 1fr; margin-top: .8rem }
+    .mini { background: rgba(255,255,255,.02); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem }
+    .mini h3 { margin-bottom: .35rem }
+    .kpi-badges { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .55rem }
+    .kpi-badges span {
+      border: 1px solid rgba(0,194,255,.20); background: rgba(0,163,217,.08);
+      color: var(--sub); padding: .26rem .54rem;
+      border-radius: 999px; font-size: .87rem; font-weight: 600;
+    }
+
+    /* CHAIN BADGES */
+    .chain-grid { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .8rem }
+    .chain {
+      background: rgba(255,255,255,.03); border: 1px solid var(--line);
+      border-radius: 8px; padding: .38rem .75rem;
+      font-size: .9rem; font-weight: 600; color: #CBD5E1;
+    }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--line) }
+    table { width: 100%; border-collapse: collapse; min-width: 480px }
+    th,td { padding: .8rem .95rem; border-bottom: 1px solid var(--line); text-align: left }
+    th { background: rgba(0,163,217,.07); color: var(--ink); font-weight: 700; font-size: .93rem }
+    tr.hi { background: rgba(0,163,217,.04) }
+    tr:hover td { background: rgba(255,255,255,.018) }
+    tr:last-child td { border-bottom: none }
+    .ok { color: var(--ok) } .warn { color: var(--warn) } .err { color: var(--err) }
+
+    /* EEAT */
+    .eeat { background: var(--card); border: 1px solid var(--lc); border-radius: var(--r); padding: 1.5rem; box-shadow: var(--sh) }
+    .eeat > h2:first-child { margin-top: 0; border-top: none; padding-top: 0 }
+
+    /* FAQ */
+    .faq-item { border-bottom: 1px solid var(--line); padding: .9rem 0 }
+    .faq-item:last-child { border-bottom: none }
+    .faq-button { all: unset; display: flex; justify-content: space-between; align-items: flex-start; width: 100%; cursor: pointer; gap: 1rem }
+    .faq-button:focus-visible { outline: 2px solid var(--c); border-radius: 4px }
+    .faq-button h3 { margin: 0; font-weight: 700; font-size: 1rem; line-height: 1.4 }
+    .faq-content { max-height: 0; overflow: hidden; transition: max-height .26s ease }
+    .faq-content.open { padding-top: .65rem }
+    .faq-plus { font-weight: 800; font-size: 1.35rem; color: var(--c); flex: 0 0 auto; line-height: 1; transition: transform .2s }
+    .faq-button[aria-expanded="true"] .faq-plus { transform: rotate(45deg) }
+
+    @media(min-width:860px){
+      .steps { grid-template-columns: repeat(4,1fr) }
+      .grid-2 { grid-template-columns: 1fr 1fr }
+      .callout-grid { grid-template-columns: 1fr 1fr }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero" role="banner">
+  <div class="container">
+    <div class="hero-card">
+      <div class="brand-row">
+        <img class="brand-logo" src="cb.png" alt="cBridge logo">
+        <div>
+          <div class="brand-label">Complete Bridge Guide</div>
+          <div class="brand-sub">Cross-Chain Transfers · 40+ Networks · Liquidity Providers · CELR Token · Safety</div>
+        </div>
+      </div>
+
+      <h1>cBridge</h1>
+      <p class="lead" style="margin-top:.7rem">
+        The complete guide to <strong>cBridge</strong> — Celer Network's cross-chain bridge
+        enabling fast, low-cost asset transfers across <strong>40+ blockchains</strong>.
+        Understand how cBridge's <strong>State Guardian Network (SGN)</strong> and
+        <strong>liquidity node</strong> model work together, how
+        <strong>bridging fees</strong> are calculated, which <strong>chains and tokens</strong>
+        are supported, how <strong>liquidity providers</strong> earn yield,
+        what the <strong>CELR token</strong> does, and how to bridge
+        assets safely while protecting yourself from the
+        <strong>risks unique to cross-chain transactions</strong>.
+      </p>
+
+      <div class="cta-center">
+        <a href="#" class="cta" aria-label="Open cBridge App">
+          <span>⇌</span> Launch cBridge
+        </a>
+      </div>
+
+      <div class="note">
+        <strong>Cross-chain is irreversible:</strong> cBridge transactions cannot be reversed
+        once submitted. Always verify the destination chain, token, and address before
+        confirming. A wrong chain selection delivers tokens to an address you may not control
+        on the destination network.
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- STEPS -->
+<section class="step-guide" aria-labelledby="how-works">
+  <div class="container">
+    <h2 id="how-works" style="margin-top:0;border-top:none;padding-top:0">
+      How cBridge Works: Connect → Select Route → Send → Receive
+    </h2>
+    <div class="steps" role="list">
+      <article class="step" role="listitem">
+        <div class="icon">01</div>
+        <h3>Connect wallet &amp; select chains</h3>
+        <p>Connect a non-custodial wallet, choose the source chain you're sending from and the destination chain you want to receive on. cBridge supports 40+ EVM and non-EVM networks from a unified interface.</p>
+      </article>
+      <article class="step" role="listitem">
+        <div class="icon">02</div>
+        <h3>Choose token, amount &amp; review fees</h3>
+        <p>Enter the token and amount to bridge. cBridge shows the estimated output after fees and slippage. Two bridging modes are available — pool-based transfer and canonical token bridging — each with different mechanics and fee structures.</p>
+      </article>
+      <article class="step" role="listitem">
+        <div class="icon">03</div>
+        <h3>SGN validates and relays the transfer</h3>
+        <p>Celer's State Guardian Network — a PoS sidechain — validates the cross-chain transfer request, coordinates with liquidity nodes, and cryptographically attests the transfer before it's finalised on the destination chain.</p>
+      </article>
+      <article class="step" role="listitem">
+        <div class="icon">04</div>
+        <h3>Tokens arrive on destination chain</h3>
+        <p>Once SGN validation completes, tokens are released from cBridge's liquidity pool or minted via the canonical bridge on the destination chain. Transfers typically complete in 5–20 minutes depending on source chain finality.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="container" role="main">
+
+  <!-- TOC -->
+  <section class="card toc" aria-label="Table of Contents">
+    <strong>On this page — cBridge:</strong>
+    <ul>
+      <li><a href="#overview">What is cBridge and how does it fit in the Celer ecosystem</a></li>
+      <li><a href="#architecture">cBridge architecture: SGN, liquidity nodes, and two bridge modes</a></li>
+      <li><a href="#chains">Supported chains and tokens on cBridge</a></li>
+      <li><a href="#fees">cBridge fees: how costs are calculated and minimised</a></li>
+      <li><a href="#how-to">How to bridge with cBridge: step-by-step tutorial</a></li>
+      <li><a href="#lp">Liquidity providers: how to earn yield on cBridge</a></li>
+      <li><a href="#celr">CELR token: utility, staking, and governance</a></li>
+      <li><a href="#safety">cBridge security: risks, the SGN model, and how to stay safe</a></li>
+      <li><a href="#comparison">cBridge vs Stargate vs Hop vs Across: bridge comparison</a></li>
+      <li><a href="#best-practices">Best practices for safe cross-chain bridging on cBridge</a></li>
+      <li><a href="#troubleshooting">Troubleshooting: stuck transfers, wrong chain, refund process</a></li>
+      <li><a href="#eeat">Authoritative sources &amp; references</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section class="card" id="overview">
+    <h2>What Is cBridge and How Does It Fit in the Celer Network Ecosystem?</h2>
+    <p>
+      <strong>cBridge</strong> is the cross-chain bridge product of <strong>Celer Network</strong> —
+      a blockchain interoperability platform that also includes the Inter-chain Message Framework (IM)
+      for general cross-chain messaging and contract calls. cBridge focuses specifically on
+      asset transfers, allowing users to move tokens across 40+ chains with low fees and fast finality.
+    </p>
+    <p>
+      Unlike simple lock-and-mint bridges that rely on a multisig committee or a single
+      operator, cBridge uses the <strong>State Guardian Network (SGN)</strong> —
+      Celer's own proof-of-stake sidechain where validators stake CELR to participate in
+      cross-chain transfer validation. This decentralises the trust model compared to
+      centralised multisig bridges, while maintaining speed advantages over
+      purely optimistic or ZK-based approaches.
+    </p>
+
+    <div class="callout-grid">
+      <div class="mini">
+        <h3>For users bridging assets</h3>
+        <p style="color:var(--muted)">Transfer tokens between 40+ chains with a clean UI, transparent fee breakdown, and real-time transfer tracking. Competitive fees, fast settlement, and broad token/chain coverage make cBridge a practical everyday bridging tool.</p>
+        <div class="kpi-badges"><span>40+ chains</span><span>Fast settlement</span><span>Transparent fees</span></div>
+      </div>
+      <div class="mini">
+        <h3>For liquidity providers</h3>
+        <p style="color:var(--muted)">Deposit tokens into cBridge liquidity pools to earn a share of bridging fees generated by users. LPs provide the inventory that enables pool-based (non-canonical) transfers — earning yield proportional to their share of each pool.</p>
+        <div class="kpi-badges"><span>Fee sharing</span><span>Pool-based yield</span><span>Passive income</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="card" id="architecture">
+    <h2>cBridge Architecture: SGN, Liquidity Nodes, and the Two Bridge Modes</h2>
+    <p>
+      cBridge operates using two distinct bridging mechanisms that serve different use cases —
+      understanding which mode is used for a given transfer affects your expectations for
+      fees, speed, and the assets you receive.
+    </p>
+
+    <div class="table-wrap">
+      <table aria-label="Bridge modes comparison">
+        <thead>
+          <tr><th>Mode</th><th>How it works</th><th>Asset received</th><th>Best for</th></tr>
+        </thead>
+        <tbody>
+          <tr class="hi">
+            <td><strong>Pool-based transfer</strong></td>
+            <td>User's tokens locked on source chain; equivalent tokens released from cBridge liquidity pool on destination</td>
+            <td>Native tokens from pool inventory</td>
+            <td>Mainstream assets with deep pool liquidity (USDC, ETH, USDT)</td>
+          </tr>
+          <tr>
+            <td><strong>Canonical token bridge</strong></td>
+            <td>Tokens locked on origin chain; canonical wrapped token minted on destination via Celer's bridge contract</td>
+            <td>Canonical wrapped version of source token</td>
+            <td>Long-tail tokens without deep pools; cross-chain token launches</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout-grid" style="margin-top:1rem">
+      <div class="mini">
+        <h3>State Guardian Network (SGN)</h3>
+        <p style="color:var(--muted)">The SGN is Celer's own PoS sidechain where validators stake CELR to participate in cross-chain message and transfer validation. SGN nodes monitor source chain events, reach consensus, and submit attestations to destination chains — replacing centralised multisig committees with a decentralised validator set.</p>
+        <div class="kpi-badges"><span>PoS validators</span><span>CELR staked</span><span>Decentralised</span></div>
+      </div>
+      <div class="mini">
+        <h3>Liquidity nodes</h3>
+        <p style="color:var(--muted)">For pool-based transfers, liquidity nodes (LPs) provide token inventory on each chain. When you bridge USDC from Ethereum to Arbitrum, your USDC is locked in the Ethereum pool and an equivalent amount is released from the Arbitrum pool — the LP earns your bridge fee for providing that inventory.</p>
+        <div class="kpi-badges"><span>Per-chain pools</span><span>Inventory model</span><span>Fee-earning</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAINS -->
+  <section class="card" id="chains">
+    <h2>Supported Chains and Tokens on cBridge</h2>
+    <p>
+      cBridge covers one of the broadest chain sets of any bridge — spanning major EVM networks,
+      Cosmos-connected chains, and Layer 2 rollups.
+    </p>
+
+    <div class="chain-grid" role="list" aria-label="Supported chains">
+      <span class="chain">Ethereum</span>
+      <span class="chain">Arbitrum</span>
+      <span class="chain">Optimism</span>
+      <span class="chain">Base</span>
+      <span class="chain">Polygon</span>
+      <span class="chain">BNB Chain</span>
+      <span class="chain">Avalanche</span>
+      <span class="chain">zkSync Era</span>
+      <span class="chain">Linea</span>
+      <span class="chain">Gnosis</span>
+      <span class="chain">Fantom</span>
+      <span class="chain">Aurora</span>
+      <span class="chain">Celo</span>
+      <span class="chain">Klaytn</span>
+      <span class="chain">OKX Chain</span>
+      <span class="chain">+ 25 more</span>
+    </div>
+
+    <p style="margin-top:1rem">
+      Token support spans stablecoins (USDC, USDT, DAI, FRAX), native gas tokens (ETH, BNB, MATIC),
+      major DeFi assets, and hundreds of project-specific tokens via the canonical bridge.
+      Pool-based transfer availability depends on LP liquidity depth on each chain pair.
+    </p>
+
+    <div class="note">
+      <strong>Verify liquidity before large transfers:</strong> Pool-based bridges depend on
+      available inventory. A route that works for $1,000 may fail or incur high slippage
+      for $500,000 if the destination pool is depleted. Check pool depth on the cBridge
+      interface before committing to large transfers.
+    </div>
+  </section>
+
+  <!-- FEES -->
+  <section class="card" id="fees">
+    <h2>cBridge Fees: How Bridging Costs Are Calculated and How to Minimise Them</h2>
+
+    <div class="table-wrap">
+      <table aria-label="Fee breakdown">
+        <thead>
+          <tr><th>Fee component</th><th>Who receives it</th><th>Typical range</th></tr>
+        </thead>
+        <tbody>
+          <tr class="hi">
+            <td>Bridge fee (pool-based)</td>
+            <td>Liquidity providers in the destination pool</td>
+            <td>0.04% – 0.19% of transfer amount</td>
+          </tr>
+          <tr>
+            <td>Protocol fee</td>
+            <td>Celer protocol / SGN validators</td>
+            <td>Small fixed or % component built into route</td>
+          </tr>
+          <tr class="hi">
+            <td>Source chain gas</td>
+            <td>Source network validators</td>
+            <td>Varies — Ethereum mainnet highest, L2s minimal</td>
+          </tr>
+          <tr>
+            <td>Destination gas (some routes)</td>
+            <td>Destination network validators</td>
+            <td>Often covered by cBridge on supported routes; check per route</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <strong>Cost tip:</strong> For large stablecoin transfers, cBridge's pool-based fee
+      (typically 0.04–0.06% for USDC/USDT routes) is often lower than alternative bridges.
+      For small transfers, source chain gas dominates total cost — use L2 source chains
+      (Arbitrum, Optimism, Base) to minimise gas overhead on the sending side.
+    </div>
+  </section>
+
+  <!-- HOW TO -->
+  <section class="card" id="how-to">
+    <h2>How to Bridge with cBridge: Step-by-Step Tutorial</h2>
+    <ol style="padding-left:1.3rem">
+      <li style="margin-bottom:.6rem"><strong>Go to the official cBridge app</strong> — use a bookmarked URL. Verify the domain before connecting your wallet. Phishing sites targeting bridge users are common.</li>
+      <li style="margin-bottom:.6rem"><strong>Connect your wallet</strong> — MetaMask, Rabby, WalletConnect, or Coinbase Wallet. Use a hardware wallet for significant amounts.</li>
+      <li style="margin-bottom:.6rem"><strong>Select the source chain and token</strong> — choose the network you're sending from and the asset you want to bridge.</li>
+      <li style="margin-bottom:.6rem"><strong>Select the destination chain and token</strong> — choose where you want to receive. Note whether you'll receive a canonical wrapped token or the native asset.</li>
+      <li style="margin-bottom:.6rem"><strong>Enter the amount and review the quote</strong> — inspect the estimated received amount, fee breakdown, and estimated transfer time before proceeding.</li>
+      <li style="margin-bottom:.6rem"><strong>Verify the destination address</strong> — by default cBridge sends to the same address on the destination chain. If you want to send to a different address, use the "Send to different address" option carefully.</li>
+      <li style="margin-bottom:.6rem"><strong>Confirm and sign the transaction</strong> — approve the cBridge contract to interact with your tokens (if not previously approved), then confirm the bridge transaction.</li>
+      <li><strong>Track the transfer</strong> — cBridge provides a real-time transfer status tracker. Most transfers complete in 5–20 minutes. Do not send a second transaction if the first is pending.</li>
+    </ol>
+
+    <div class="note">
+      <strong>Always send from a personal wallet</strong> — never initiate a bridge transaction
+      from a CEX withdrawal directly into cBridge. If the CEX withdrawal delays, the bridge
+      transaction may timeout. Send to your personal wallet first, then bridge from there.
+    </div>
+  </section>
+
+  <!-- LP -->
+  <section class="card" id="lp">
+    <h2>Liquidity Providers on cBridge: How to Earn Yield from Bridging Fees</h2>
+    <p>
+      cBridge's pool-based transfer model requires liquidity providers to deposit tokens
+      on each chain. LPs earn a share of every bridge fee generated by users transferring
+      through their pool — passive yield from providing cross-chain liquidity.
+    </p>
+
+    <div class="callout-grid">
+      <div class="mini">
+        <h3>How LP yield works</h3>
+        <p style="color:var(--muted)">Deposit a supported token (e.g. USDC) on any supported chain into cBridge's liquidity pool for that token. Your share of the pool earns a proportional share of the bridge fees from every transfer that uses that token-chain pool. Higher-volume routes generate more fees.</p>
+        <div class="kpi-badges"><span>Fee proportional</span><span>Deposit anytime</span><span>Withdraw anytime</span></div>
+      </div>
+      <div class="mini">
+        <h3>LP risks to understand</h3>
+        <p style="color:var(--muted)">cBridge LPs face liquidity pool risk — if the bridge is exploited, LP funds could be drained. Pool imbalance risk also exists: if too many users bridge one-directionally, the destination pool depletes and rebalancing costs arise. Yield must be weighed against these risks.</p>
+        <div class="kpi-badges"><span>Exploit risk</span><span>Pool imbalance</span><span>Smart-contract risk</span></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Which pools to prioritise:</strong> High-volume, well-balanced pools (USDC on major L2 pairs)
+      generate consistent fee income with relatively predictable liquidity management needs.
+      Low-volume or highly directional pools may offer lower effective yield despite similar nominal rates.
+    </div>
+  </section>
+
+  <!-- CELR TOKEN -->
+  <section class="card" id="celr">
+    <h2>CELR Token: Utility, SGN Staking, and Governance</h2>
+    <p>
+      <strong>CELR</strong> is the native token of the Celer Network ecosystem,
+      serving as the economic backbone of the State Guardian Network that secures cBridge.
+    </p>
+
+    <div class="table-wrap">
+      <table aria-label="CELR token utility">
+        <thead>
+          <tr><th>Function</th><th>How CELR is used</th></tr>
+        </thead>
+        <tbody>
+          <tr class="hi">
+            <td>SGN validator staking</td>
+            <td>Validators stake CELR to participate in the SGN — securing cross-chain transfer validation. Stake is slashable for malicious behaviour</td>
+          </tr>
+          <tr>
+            <td>Delegated staking</td>
+            <td>CELR holders delegate to SGN validators to earn staking rewards without running validator infrastructure</td>
+          </tr>
+          <tr class="hi">
+            <td>Governance</td>
+            <td>Staked CELR holders vote on cBridge fee parameters, supported chain additions, protocol upgrades, and treasury decisions</td>
+          </tr>
+          <tr>
+            <td>Fee discounts</td>
+            <td>Holding CELR can qualify users for reduced bridge fees on certain routes — incentivising long-term token holding alongside protocol use</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section class="card" id="safety">
+    <h2>cBridge Security: Risks, the SGN Trust Model, and How to Stay Safe</h2>
+
+    <div class="table-wrap">
+      <table aria-label="Risk analysis">
+        <thead>
+          <tr><th>Risk</th><th>Level</th><th>Mitigation</th></tr>
+        </thead>
+        <tbody>
+          <tr class="hi">
+            <td>Smart-contract exploit</td>
+            <td class="warn">Medium</td>
+            <td>Multiple audits; significant battle-testing; bug bounty programme</td>
+          </tr>
+          <tr>
+            <td>SGN validator collusion</td>
+            <td class="warn">Low-Medium</td>
+            <td>Requires majority of staked CELR to collude — costly; slashing penalises misbehaviour</td>
+          </tr>
+          <tr class="hi">
+            <td>Pool liquidity depletion</td>
+            <td class="warn">Medium</td>
+            <td>Check pool depth before large transfers; large transfers may fail or incur high slippage</td>
+          </tr>
+          <tr>
+            <td>Wrong destination chain/address</td>
+            <td class="err">High (user error)</td>
+            <td>Irreversible — triple-check chain and address before confirming any bridge transaction</td>
+          </tr>
+          <tr class="hi">
+            <td>Transfer timeout / stuck</td>
+            <td class="warn">Low-Medium</td>
+            <td>cBridge's refund mechanism allows recovery of stuck transfers via the official app</td>
+          </tr>
+          <tr>
+            <td>Phishing / fake cBridge sites</td>
+            <td class="err">High (user-controlled)</td>
+            <td>Bookmark official cBridge URL; verify domain before every wallet connection</td>
+          </tr>
+          <tr class="hi">
+            <td>Canonical token liquidity risk</td>
+            <td class="warn">Low-Medium</td>
+            <td>Canonical tokens may have limited secondary market depth on some destination chains</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" style="margin-top:1rem">
+      <strong>Historical context:</strong> Celer Network's IM contracts experienced a BGP hijacking
+      attack in 2022 that affected DNS — not the bridge contracts directly. The team responded
+      rapidly and no user funds were confirmed lost in that incident. However, no bridge protocol
+      carries a zero-risk profile. Size positions accordingly and always use bookmarked URLs.
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="card" id="comparison">
+    <h2>cBridge vs Stargate vs Hop vs Across: Cross-Chain Bridge Comparison</h2>
+
+    <div class="table-wrap">
+      <table aria-label="Bridge comparison">
+        <thead>
+          <tr><th>Feature</th><th>cBridge</th><th>Stargate</th><th>Hop Protocol</th><th>Across</th></tr>
+        </thead>
+        <tbody>
+          <tr class="hi">
+            <td>Chain coverage</td>
+            <td class="ok">40+ chains</td>
+            <td class="warn">~15 chains</td>
+            <td class="warn">Major L2s</td>
+            <td class="warn">Major L2s + Ethereum</td>
+          </tr>
+          <tr>
+            <td>Security model</td>
+            <td>SGN PoS validators</td>
+            <td>LayerZero oracles + relayers</td>
+            <td>Bonding + AMM</td>
+            <td>Optimistic + UMA oracle</td>
+          </tr>
+          <tr class="hi">
+            <td>Transfer speed</td>
+            <td class="warn">5–20 min</td>
+            <td class="ok">2–5 min</td>
+            <td class="ok">~2 min</td>
+            <td class="ok">~2 min</td>
+          </tr>
+          <tr>
+            <td>Native token received</td>
+            <td class="ok">Yes (pool-based routes)</td>
+            <td class="ok">Yes (unified liquidity)</td>
+            <td class="warn">Hop token (h-token) — then swap</td>
+            <td class="ok">Yes</td>
+          </tr>
+          <tr class="hi">
+            <td>LP yield available</td>
+            <td class="ok">Yes</td>
+            <td class="ok">Yes (STG emissions)</td>
+            <td class="ok">Yes</td>
+            <td class="ok">Yes</td>
+          </tr>
+          <tr>
+            <td>Stablecoin optimisation</td>
+            <td class="ok">Strong</td>
+            <td class="ok">Strong (Delta algorithm)</td>
+            <td class="warn">Moderate</td>
+            <td class="ok">Strong</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" style="margin-top:1rem">
+      <strong>When to choose cBridge:</strong> Broadest chain coverage — if you need to bridge
+      to a less common chain, cBridge is often the only or best option.
+      For speed-critical transfers on major L2 pairs, Across or Stargate may be faster.
+      For maximum chain coverage and LP yield opportunities, cBridge remains a top-tier choice.
+    </div>
+  </section>
+
+  <!-- BEST PRACTICES -->
+  <section class="card" id="best-practices">
+    <h2>Best Practices for Safe Cross-Chain Bridging on cBridge</h2>
+    <ul style="padding-left:1.2rem">
+      <li style="margin-bottom:.5rem"><strong>Bookmark the official cBridge URL</strong> — bridge phishing sites are highly convincing and actively target high-value users. Never navigate to cBridge via a link in a DM, email, or ad.</li>
+      <li style="margin-bottom:.5rem"><strong>Triple-check the destination chain before confirming</strong> — the most common bridge loss is sending to the right address but the wrong chain. Tokens sent to a chain where you don't control the address are permanently inaccessible.</li>
+      <li style="margin-bottom:.5rem"><strong>Verify you'll receive the expected token type</strong> — for canonical bridge routes, confirm whether you're receiving a canonical wrapped token or the native asset, and whether that wrapped token has sufficient liquidity on the destination chain.</li>
+      <li style="margin-bottom:.5rem"><strong>Test with a small amount first</strong> — especially on new chain pairs or tokens you haven't bridged before. A $5 test costs little and confirms the full flow before a large transfer.</li>
+      <li style="margin-bottom:.5rem"><strong>Ensure destination gas</strong> — have a small balance of the destination chain's native token to interact with received tokens. Some chains require gas for even basic transfers after bridging.</li>
+      <li style="margin-bottom:.5rem"><strong>Don't bridge from an exchange</strong> — send to your own wallet first, then bridge. Exchange withdrawal delays can interfere with bridge transaction timing.</li>
+      <li><strong>Revoke stale cBridge approvals</strong> after large transfers — bridge contract approvals accumulate and represent an ongoing attack surface. Use Revoke.cash to clean up after significant bridging activity.</li>
+    </ul>
+  </section>
+
+  <!-- TROUBLESHOOTING -->
+  <section class="card" id="troubleshooting">
+    <h2>Troubleshooting cBridge: Stuck Transfers, Wrong Chain, and Refund Process</h2>
+
+    <h3>"My transfer has been pending for over 30 minutes"</h3>
+    <ul style="padding-left:1.2rem">
+      <li>Check the source chain block explorer to confirm the originating transaction was successfully mined — a pending transaction that hasn't confirmed on-chain is the most common cause of apparent bridge delays.</li>
+      <li>Open the cBridge transfer history page and look up your transaction hash. The status tracker shows which step the transfer is currently at (submitted, SGN validated, destination pending, completed).</li>
+      <li>If the transfer is genuinely stuck beyond the expected time, the cBridge refund mechanism allows you to submit a refund request from the transfer history page. Do not submit a second bridge transaction before resolving the first.</li>
+    </ul>
+
+    <h3>"I selected the wrong destination chain"</h3>
+    <ul style="padding-left:1.2rem">
+      <li>If the transaction is already confirmed on the source chain, the bridge cannot be stopped. The tokens will arrive on the destination chain you specified.</li>
+      <li>If you sent to an address you control on the wrong chain, import that wallet on the destination chain and access the tokens from there.</li>
+      <li>If you sent to an address you don't control on the destination chain (e.g. an exchange deposit address for a different chain), contact the exchange immediately — some exchanges can manually recover cross-chain deposits but this is not guaranteed.</li>
+    </ul>
+
+    <h3>"I received a canonical token but can't swap it"</h3>
+    <ul style="padding-left:1.2rem">
+      <li>Canonical tokens from cBridge may have limited DEX liquidity on some destination chains. Check the token's contract address on the destination chain's primary DEX to assess available swap depth.</li>
+      <li>If the canonical token is the "official" bridged version recognised by the project, it should be swappable on major DEXs over time — check the project's official documentation for supported DEX listings.</li>
+    </ul>
+
+    <div class="note">
+      <strong>Source chain is always the ground truth:</strong> For any transfer issue, verify
+      the originating transaction on the source chain block explorer first.
+      If the source transaction failed, no bridge activity occurred and your funds remain in your wallet.
+    </div>
+  </section>
+
+  <!-- EEAT -->
+  <section class="eeat" id="eeat" aria-labelledby="eeat-title">
+    <h2 id="eeat-title">cBridge: Authoritative References &amp; External Sources</h2>
+
+    <h3>cBridge &amp; Celer Network — Official Sources</h3>
+    <ul style="padding-left:1.2rem">
+      <li><a href="https://cbridge.celer.network/" target="_blank" rel="noopener nofollow">cBridge — Official App</a></li>
+      <li><a href="https://celer.network/" target="_blank" rel="noopener nofollow">Celer Network — Official Website</a></li>
+      <li><a href="https://cbridge-docs.celer.network/" target="_blank" rel="noopener nofollow">cBridge — Official Documentation</a></li>
+      <li><a href="https://github.com/celer-network" target="_blank" rel="noopener nofollow">Celer Network — Smart Contracts (GitHub)</a></li>
+    </ul>
+
+    <h3>Cross-Chain &amp; Bridge Research</h3>
+    <ul style="padding-left:1.2rem">
+      <li><a href="https://ethereum.org/en/bridges/" target="_blank" rel="noopener nofollow">Ethereum.org — Blockchain Bridges Overview</a></li>
+      <li><a href="https://defillama.com/protocol/cbridge" target="_blank" rel="noopener nofollow">DeFiLlama — cBridge TVL &amp; Volume Data</a></li>
+      <li><a href="https://dune.com/browse/dashboards" target="_blank" rel="noopener nofollow">Dune Analytics — Cross-Chain Bridge Dashboards</a></li>
+    </ul>
+
+    <h3>Security &amp; Safety Tools</h3>
+    <ul style="padding-left:1.2rem">
+      <li><a href="https://revoke.cash/" target="_blank" rel="noopener nofollow">Revoke.cash — Token Approval Manager</a></li>
+      <li><a href="https://blog.openzeppelin.com/security-audits" target="_blank" rel="noopener nofollow">OpenZeppelin — Smart Contract Security Audits</a></li>
+      <li><a href="https://rekt.news/" target="_blank" rel="noopener nofollow">Rekt.news — Bridge Exploit Post-Mortems</a></li>
+    </ul>
+
+    <div class="note" style="margin-top:1.2rem">
+      <strong>About:</strong> Prepared by Crypto Finance Experts as a practical, SEO-oriented knowledge base for
+      <em>cBridge</em>: cross-chain bridging, SGN architecture, supported chains, fees, LP yield, CELR token, security, and troubleshooting.
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="card" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title" style="margin-top:0;border-top:none;padding-top:0">cBridge: Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f1" id="b1">
+        <h3>What is cBridge and how does it differ from other cross-chain bridges?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f1" class="faq-content" role="region" aria-labelledby="b1">
+        <p>cBridge is Celer Network's cross-chain bridge supporting 40+ blockchains. It differentiates through its State Guardian Network (SGN) — a PoS sidechain where validators stake CELR to participate in transfer validation, replacing centralised multisig committees. cBridge also offers two bridging modes: pool-based transfers (fast, native assets) and canonical token bridging (for long-tail tokens), giving it broader coverage than most single-mechanism bridges.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f2" id="b2">
+        <h3>How long does a cBridge transfer take?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f2" class="faq-content" role="region" aria-labelledby="b2">
+        <p>Most cBridge transfers complete in 5–20 minutes. The time varies based on: source chain finality speed (Ethereum mainnet is slowest due to block finality requirements), SGN validation time, and destination chain confirmation speed. L2-to-L2 transfers (e.g. Arbitrum to Optimism) are typically faster than Ethereum mainnet origin transfers. The cBridge app displays estimated times per route before you confirm.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f3" id="b3">
+        <h3>What are cBridge fees and how much will I pay?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f3" class="faq-content" role="region" aria-labelledby="b3">
+        <p>cBridge fees consist of: a bridge fee (0.04–0.19% of transfer amount, paid to LPs), source chain gas (varies by network), and a small protocol fee. The cBridge interface shows the full fee breakdown and estimated received amount before you confirm — the "You receive" figure is your all-in output after all deductions. For large stablecoin transfers, cBridge's per-percentage fee is among the most competitive available.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f4" id="b4">
+        <h3>What is the State Guardian Network (SGN)?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f4" class="faq-content" role="region" aria-labelledby="b4">
+        <p>The SGN is Celer's own proof-of-stake sidechain that validates cross-chain transfers and messages. Validators stake CELR to participate — their stake is at risk if they behave maliciously (slashable). When you bridge on cBridge, SGN nodes monitor your source chain transaction, reach consensus, and authorise the release of funds on the destination chain. This distributed validation model is more decentralised than bridges that rely on a single multisig committee.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f5" id="b5">
+        <h3>Can I earn yield as a liquidity provider on cBridge?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f5" class="faq-content" role="region" aria-labelledby="b5">
+        <p>Yes — deposit tokens into cBridge's liquidity pools on any supported chain to earn a share of bridge fees from users transferring through your pool. Your yield is proportional to your share of the pool and the volume of transfers using that route. High-volume routes (USDC on major L2 pairs) generate more consistent fee income. LP risks include smart-contract exploit risk and pool imbalance from directional transfer flows.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f6" id="b6">
+        <h3>What happens if my cBridge transfer gets stuck?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f6" class="faq-content" role="region" aria-labelledby="b6">
+        <p>First verify the source chain transaction confirmed on-chain using a block explorer. If confirmed, check your transfer status in cBridge's transfer history with your transaction hash. If the transfer is genuinely stuck beyond the estimated time, cBridge provides a built-in refund mechanism accessible from the transfer history page — you can request return of your funds to the source chain. Never submit a second transaction before resolving the first.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f7" id="b7">
+        <h3>What is the difference between pool-based transfer and canonical token bridging?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f7" class="faq-content" role="region" aria-labelledby="b7">
+        <p>Pool-based transfer: your tokens are locked on the source chain and equivalent native tokens are released from cBridge's LP pool on the destination — you receive the same native token (e.g. USDC). Canonical token bridging: tokens are locked on source and a canonical wrapped version is minted on destination — you receive a bridge-wrapped token that may have limited secondary liquidity. Pool-based is preferred for mainstream assets; canonical bridging enables long-tail tokens that don't have pool inventory.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f8" id="b8">
+        <h3>What is the CELR token and why would I hold it?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f8" class="faq-content" role="region" aria-labelledby="b8">
+        <p>CELR is Celer Network's native token powering the SGN security layer. Validators stake CELR to participate in cross-chain validation; holders can delegate to validators and earn staking rewards. CELR also provides governance rights over cBridge parameters and may qualify holders for fee discounts. The token's value is linked to SGN security demand and Celer protocol adoption — bridging volume drives staking yield sustainability.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-button" aria-expanded="false" aria-controls="f9" id="b9">
+        <h3>Is cBridge safe and has it been audited?</h3><span class="faq-plus">+</span>
+      </button>
+      <div id="f9" class="faq-content" role="region" aria-labelledby="b9">
+        <p>cBridge's smart contracts have been audited by multiple reputable security firms and the protocol has processed significant cross-chain volume. No bridge is risk-free — smart-contract vulnerabilities, SGN validator behaviour, and liquidity pool risks are all real. The 2022 BGP hijacking incident affecting Celer's DNS (not bridge contracts) demonstrated that operational security extends beyond smart contracts. Always access cBridge via bookmarked official URL and verify the domain every session.</p>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="container" role="contentinfo" style="padding:2.5rem 0; border-top:1px solid var(--line); margin-top:2rem">
+  <p style="color:var(--dim); font-size:.93rem">© 2026 cBridge Guide. Educational content with a security-first operational focus. Not financial advice.</p>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      document.querySelectorAll('.faq-button').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        const c = document.getElementById(b.getAttribute('aria-controls'));
+        c.classList.remove('open'); c.style.maxHeight = '0';
+      });
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        const content = document.getElementById(btn.getAttribute('aria-controls'));
+        content.classList.add('open');
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
